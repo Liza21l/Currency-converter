@@ -83,6 +83,14 @@ def add_financial_record(type, amount, currency, description):
         if type == "costs" or type == "investment":
             withdrawal_funds(currency, amount)
 
+def parse_transaction(text):
+    text_parse = text.split()
+    if len(text_parse) >= 3:
+        amount = float(text_parse[-2])
+        currency = text_parse[-1]
+        description = ' '.join(text_parse[:-2])
+        return description, amount, currency
+
 while True:
     print("____Purr-Currency🐾💵____")
     print(f"{Fore.CYAN}1.{Style.RESET_ALL} Показати баланс")
@@ -123,17 +131,19 @@ while True:
         print("Додати витрати")
         print("Iнвестиції")
         type = input("Виберіть дію вписавши на англійській profit, costs або investment: ")
-        currency = input("Введіть валюту(UAH) наприклад: ")
-        amount = float(input("Введіть суму: "))
-        description = input("Введіть опис: ")
-        if type == "profit":
-            add_financial_record("profit", amount, currency, description)
-        if type == "costs":
-            add_financial_record("costs", amount, currency, description)
-        if type == "investments":
-            add_financial_record("investments", amount, currency, description)
-        else:
-            print("Ви не вірно ввели, спробуйте ще раз")
+        # currency = input("Введіть валюту(UAH) наприклад: ")
+        # amount = float(input("Введіть суму: "))
+        description = input("Введіть опис транзакції (наприклад, 'Кава в Starbucks 5 USD'): ")
+        description, amount, currency = parse_transaction(description)
+        if description is not None:
+            if type == "profit":
+                add_financial_record("profit", amount, currency, description)
+            if type == "costs":
+                add_financial_record("costs", amount, currency, description)
+            if type == "investments":
+                add_financial_record("investments", amount, currency, description)
+            else:
+                print("Ви не вірно ввели, спробуйте ще раз")
     elif action == "7":
         share_financial_record()
     elif action == "8":
